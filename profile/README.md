@@ -1,7 +1,5 @@
 <div align="center">
-
-## Agile localization for tech companies
-
+<h2>Agile localization for tech companies</h2>
 </div>
 
 Crowdin is a cloud-based solution that streamlines localization management for your team. It's the perfect place to effectively manage all of your multilingual content.
