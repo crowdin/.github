@@ -25,6 +25,7 @@ jobs:
             npm i -g release-it
             npm i -g @j-ulrich/release-it-regex-bumper
             npm i -g @release-it/keep-a-changelog
+            npm i -g @release-it/conventional-changelog
 
         - name: git config
           run: |
