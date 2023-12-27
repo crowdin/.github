@@ -1,0 +1,77 @@
+# This is a reusable workflow supposed to automate the dependency analysis in the Crowdin's repositories
+#
+# See the workflow example at the end of this file
+#
+name: Dependency Analysis
+
+on:
+  workflow_call:
+    secrets:
+      FOSSA_API_KEY:
+        required: true
+
+jobs:
+  dependency-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install FOSSA CLI
+        run: |
+          curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+
+      - name: Generate project ID
+        run: |
+          echo "FOSSA_PROJECT_ID=$(echo -n 'git@github.com:${{ github.repository }}.git' | md5sum | awk '{print $1}')" >> $GITHUB_ENV
+
+      - name: Fossa analyze
+        env:
+          FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+        run: >
+          fossa analyze
+          --project "$FOSSA_PROJECT_ID"
+          --title "${{ github.repository }}"
+          --project-url "${{ github.server_url }}/${{ github.repository }}"
+          --branch "${{ github.ref_name }}"
+          --with-telemetry-scope "off"
+
+      - name: Fossa test
+        env:
+          FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+        run: >
+          fossa test
+          --project "$FOSSA_PROJECT_ID"
+          --with-telemetry-scope "off"
+
+      - name: Download report
+        if: failure()
+        run: >
+          curl -o issues.csv -X "GET"
+          "https://app.fossa.com/api/projects/custom%2B40134%2F${FOSSA_PROJECT_ID}/export-issues/csv?revisionId=${{ github.sha }}"
+          -H "Accept: text/csv"
+          -H "Authorization: Bearer ${{ secrets.FOSSA_API_KEY }}"
+
+      - name: Upload artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fossa-report
+          path: issues.csv
+
+# Usage example
+#
+#name: Dependency Analysis
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#  schedule:
+#    - cron: '0 0 * * *' # https://crontab.guru/#0_0_*_*_*
+#
+#jobs:
+#  dependency-analysis:
+#    uses: crowdin/.github/.github/workflows/dependency-analysis.yml@main
+#      secrets:
+#        FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
