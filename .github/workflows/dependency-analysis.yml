@@ -13,6 +13,9 @@ on:
       exclude-path:
         required: false
         type: string
+      java-version:
+        required: false
+        type: string
 
 jobs:
   dependency-analysis:
@@ -24,6 +27,13 @@ jobs:
       - name: Install FOSSA CLI
         run: |
           curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+
+      - name: Install Java
+        if: inputs.java-version != null
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
 
       - name: Generate project ID
         run: |
@@ -96,3 +106,4 @@ jobs:
 #      FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
 #    with:
 #      exclude-path: 'website' # optional
+#      java-version: '17' # optional
