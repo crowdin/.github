@@ -9,6 +9,10 @@ on:
     secrets:
       FOSSA_API_KEY:
         required: true
+    inputs:
+      exclude-path:
+        required: false
+        type: string
 
 jobs:
   dependency-analysis:
@@ -26,6 +30,20 @@ jobs:
           echo "FOSSA_PROJECT_ID=$(echo -n 'git@github.com:${{ github.repository }}.git' | md5sum | awk '{print $1}')" >> $GITHUB_ENV
 
       - name: Fossa analyze
+        if: inputs.exclude-path != null
+        env:
+          FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+        run: >
+          fossa analyze
+          --project "$FOSSA_PROJECT_ID"
+          --title "${{ github.repository }}"
+          --project-url "${{ github.server_url }}/${{ github.repository }}"
+          --branch "${{ github.ref_name }}"
+          --exclude-path "${{ inputs.exclude-path }}"
+          --with-telemetry-scope "off"
+
+      - name: Fossa analyze
+        if: inputs.exclude-path == null
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
         run: >
@@ -69,9 +87,12 @@ jobs:
 #      - main
 #  schedule:
 #    - cron: '0 0 * * *' # https://crontab.guru/#0_0_*_*_*
+#  workflow_dispatch:
 #
 #jobs:
 #  dependency-analysis:
 #    uses: crowdin/.github/.github/workflows/dependency-analysis.yml@main
-#      secrets:
-#        FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+#    secrets:
+#      FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+#    with:
+#      exclude-path: 'website' # optional
