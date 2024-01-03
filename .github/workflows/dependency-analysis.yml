@@ -50,6 +50,7 @@ jobs:
           --project-url "${{ github.server_url }}/${{ github.repository }}"
           --branch "${{ github.ref_name }}"
           --exclude-path "${{ inputs.exclude-path }}"
+          --project-label "GitHub"
           --with-telemetry-scope "off"
 
       - name: Fossa analyze
@@ -62,6 +63,7 @@ jobs:
           --title "${{ github.repository }}"
           --project-url "${{ github.server_url }}/${{ github.repository }}"
           --branch "${{ github.ref_name }}"
+          --project-label "GitHub"
           --with-telemetry-scope "off"
 
       - name: Fossa test
@@ -96,7 +98,7 @@ jobs:
 #    branches:
 #      - main
 #  schedule:
-#    - cron: '0 0 * * *' # https://crontab.guru/#0_0_*_*_*
+#    - cron: '0 0 * * MON'
 #  workflow_dispatch:
 #
 #jobs:
