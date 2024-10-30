@@ -12,9 +12,9 @@
 
 ### :wave: Welcome
 
-Crowdin is a cloud-based solution that streamlines localization management for your team. It's the perfect place to effectively manage all of your multilingual content.
+Crowdin is an AI-powered, cloud-based localization platform that streamlines the management of multilingual content. With flexible translation options and automated updates, Crowdin helps teams deliver native experiences globally while ensuring top-notch security.
 
-This GitHub organization contains repos that are _officially_ maintained by [Crowdin](https://crowdin.com/).
+This GitHub organization contains repositories that are _officially_ maintained by [Crowdin](https://crowdin.com/).
 
 ### :computer: Contributing
 
