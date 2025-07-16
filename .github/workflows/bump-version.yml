@@ -36,6 +36,7 @@ jobs:
           run: npx release-it --no-changelog --increment ${{ github.event.inputs.version }} --ci -V
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NODE_DEBUG: release-it:*
 
 # Usage example
 #
